@@ -1,0 +1,30 @@
+<div class="sidebar-toggle hidden">
+  <button type="button" class="btn-info btn">
+    <span class="glyphicon glyphicon-menu-hamburger"></span>
+  </button>
+</div>
+
+<div class="col-md-4 col-lg-3">
+  <div class="sidebar">
+    <h4 class="heading">Search Marketplace</h4>
+    <form accept-charset="UTF-8" action="#" class="search-form" method="post">
+      <i class="fa fa-spinner fa-spin searchLoader" style="display: none;"></i>
+      <input value="" type="text" name="query" placeholder="Search" aria-label="Search" id="IntegrationSearch" class="form-control search filter_app_with_text">
+    </form>
+
+    <h4 class="heading">Collections</h4>
+    <ul class="category_filtering">
+      <li><%= link_to 'All Apps', 'javascript:void(0)', class: 'collection_filter', 'data-category' => 'all' %></li>
+      <li><%= link_to 'My Apps', 'javascript:void(0)', class: 'collection_filter', 'data-category' => 'myApps' %></li>
+      <li><%= link_to 'Popular', 'javascript:void(0)', class: 'collection_filter', 'data-category' => 'popular' %></li>
+      <li><%= link_to 'Featured', 'javascript:void(0)', class: 'collection_filter', 'data-category' => 'featured' %></li>
+    </ul>
+
+    <h4 class="heading">Categories</h4>
+    <ul class="category_filtering">
+      <% allowed_categories.each do |category| %>
+        <li><a href="#" data-category="<%= category %>" class="category_filter"><%= category %></a></li>
+      <% end %>
+    </ul>
+  </div>
+</div>

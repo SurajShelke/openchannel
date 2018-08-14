@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My App</title>
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' %>
+    <%= stylesheet_link_tag 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css' %>
+    <%= stylesheet_link_tag 'application', media: 'all' %>
+
+   	<%= javascript_include_tag 'https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js' %>
+   	<%= javascript_include_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js' %>
+    <%= javascript_include_tag 'application' %>
+
+  </head>
+
+  <body class="<%= is_path?([app_details_path(:app_safe_name), app_details_with_version_path(:app_id, :version)]) ? 'bg-light' : '' %>">
+    <% if ENV['MARKETPLACE_ID'].present? %>
+      <%= render 'shared/header' %>
+    <% end %>
+    <%= yield %>
+  </body>
+
+  <script>
+    <% if defined?(:app) %>
+      var app_object = <%= @app.present? ? @app.to_json.html_safe : "null" %>;
+      var app = JSON.stringify(app_object);
+    <% end %>
+    <% if defined?(:statistics) %>
+      var statistics = '<%= @statistics %>';
+    <% end %>
+    <% if defined?(session[:toast_type]) %>
+      var toast_type = '<%= session[:toast_type] %>';
+      <% session[:toast_type] = '' %>
+    <% end %>
+    <% if defined?(session[:toast_message]) %>
+      var toast_message = '<%= session[:toast_message] %>';
+      <% session[:toast_message] = '' %>
+    <% end %>
+  </script>
+</html>

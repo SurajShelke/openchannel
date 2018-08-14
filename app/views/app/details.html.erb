@@ -1,0 +1,93 @@
+<%= stylesheet_link_tag 'market-custom' %>
+<div class="jumbotron hero-section text-center">
+  <div class="container">
+    <h2 class="Integration__heading"><%= @app['name'] %></h2>
+    <%= image_tag @app["customData"]["icon"], class: 'Integration-logo', alt: '' %>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- sidebar -->
+  <div class="col-sm-12 col-md-4 col-md-push-8">
+
+    <!-- download button card -->
+    <div class="card text-center">
+      <% if ((@app['ownership'].present? && @app['ownership']['ownershipStatus'] == "active") rescue false) %>
+        <button class="btn-danger btn btn-lg uninstall_app" data-app-id="<%= @app['appId'] %>" data-ownership-id="<%= @app["ownership"]["ownershipId"] %>" data-model-id="<%= @app['model'][0]['modelId'] %>"><i class="fa fa-times"></i> Uninstall App</button>
+      <% else %>
+        <button class="btn-primary btn btn-lg install_app" data-app-id="<%= @app['appId'] %>" data-model-id="<%= @app['model'][0]['modelId'] %>" <%= 'disabled' if @app['ownership'].blank? && params[:version].present? %>><i class="fa fa-check"></i> Get It Now</button>
+      <% end %>
+    </div>
+
+    <!-- media card -->
+    <% if @app['customData']['video'].present? || @images.present? %>
+      <div class="card">
+        <% if @app['customData']['video'].present? %>
+          <div class="embed-responsive embed-responsive-16by9">
+            <iframe src="<%= valid_url(@app['customData']['video']) %>" class="embed-responsive-item"></iframe>
+          </div>
+        <% end %>
+
+        <% if @images.present? %>
+          <div class="thumb-slider">
+            <ul class="bxslider">
+              <% @images.each do |image| %>
+                <li>
+                  <a href="<%= image %>">
+                    <%= image_tag image %>
+                  </a>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- details card -->
+    <% if @app['customData']['website'].present? || @app['customData']['category'].present? %>
+      <div class="card">
+        <% if @app['customData']['website'].present? %>
+          <h4 class="lead-txt">Website</h4>
+          <p><a href="<%= visit_website_url(@app['customData']['website']) %>" target="_blank"><%= @app['customData']['website'] %></a></p>
+        <% end %>
+
+        <% if @app['customData']['category'].present? %>
+          <h4 class="lead-txt">Categories</h4>
+          <p><%= @app['customData']['category'].join(', ') %></p>
+        <% end %>
+      </div>
+    <% end %>
+
+  </div><!-- end sidebar -->
+
+  <!-- search conatiner -->
+  <div class="col-sm-12 col-md-8 col-md-pull-4">
+    <div class="main-content">
+
+      <div class="card">
+        <div class="description">
+          <%= @app['customData']['description'].html_safe %>
+        </div>
+      </div>
+
+      <% if @related_apps.present? %>
+        <div class="related-product">
+          <h4>Other Related Apps</h4>
+          <% @related_apps.each do |related_app| %>
+            <div class="col-sm-6 col-md-4 MarketplaceFeature">
+              <a href="/details/<%= related_app['safeName'][0] %>">
+                <div class="MarketplaceFeature-icon">
+                  <%= image_tag "#{related_app['customData']['icon']}" %>
+                </div>
+                <h3><%= related_app['name'] %></h3>
+                <p class="MarketplaceFeature-text"><%= related_app['customData']['summary'] %></p>
+              </a>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

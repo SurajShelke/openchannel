@@ -1,0 +1,199 @@
+<section class="breadcrumb">
+  <div class="container">
+    <h1> Edit App </h1>
+    <a href="/">
+      <span> Home </span>
+    </a>
+    <span> / </span>
+    <a href="/apps">
+      <span> My Apps </span>
+    </a>
+    <span> / </span>
+    <span> Edit App </span>
+  </div>
+</section>
+<section class="form">
+  <div class="container">
+    <h1>
+      <i class="fa fa-search"> </i>
+      <span> <%= @views.to_i %> Views </span>
+    </h1>
+    <div id="plot"> </div>
+    <form class="form" method="post" action="/api/app/update" novalidate>
+      <% if @app['parent'].present? && @app['parent']['status']['value'] == "suspended" && @app['parent']['status']['reason'].present?%>
+        <div class="alert alert-danger">
+          <i class="fa fa-exclamation-circle"> </i>
+          <span> <%= @app['parent']['status']['reason'] %> </span>
+        </div>
+      <% elsif @app['status']['value'] == 'rejected' && @app['status']['reason'].present? %>
+        <div class="alert alert-danger">
+          <i class="fa fa-exclamation-circle"> </i>
+          <span> <%= @app['status']['reason'] %> </span>
+        </div>
+      <%end%>
+      <input type="hidden" id="publish" name="publish" value="false">
+      <input type="hidden" id="appId" name="appId" value="<%= @app['appId'] %>">
+      <input type="hidden" id="version" name="version" value="<%= @app['version'] %>">
+      <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+      <div class="form-group row control-group">
+        <div class="col-md-3 item">
+          Application Name <span class="text-danger"> * </span>
+        </div>
+        <div class="col-md-6 controls">
+          <input class="form-control" required data-validation-required-message="Please fill out this field", name="name" value="<%= @app['name'] %>">
+        </div>
+      </div>
+      <div class="form-group row control-group">
+        <div class="col-md-3 item">
+          Summary <span class="text-danger"> * </span>
+        </div>
+        <div class="col-md-6 controls">
+          <textarea class="tinymcs form-control" maxlength="150" required data-validation-required-message="Please fill out this field" name="summary"><%= @app['customData']['summary'] %></textarea>
+          <p class="form-text">Maximum 150 characters</p>
+        </div>
+      </div>
+      <div class="form-group row control-group">
+        <div class="col-md-3 item">
+          Description <span class="text-danger"> * </span>
+        </div>
+        <div class="col-md-6 controls">
+          <textarea class="form-control" id="description" required data-validation-required-message="Please fill out this field" name="description"><%= @app['customData']['description'] %></textarea>
+        </div>
+      </div>
+      <div class="form-group row control-group">
+        <div class="col-md-3 item">
+          Icon <span class="text-danger"> * </span>
+        </div>
+        <div class="col-md-6 controls">
+          <div id="upload-icon" class="dropzone">
+            <% if @app['customData']['icon'] != nil %>
+              <div class="dz-preview dz-processing dz-image-preview dz-success dz-complete">
+                <div class="dz-image">
+                  <img data-dz-thumbnail, src="<%= @app['customData']['icon'] %>">
+                </div>
+                <div class="dz-progress">
+                  <span class="dz-upload completed" data-dz-uploadprogress style="width: 100%">
+                    Complete
+                  </span>
+                </div>
+                <a class="dz-remove" href="javascript:void(0)" data-dz-remove onclick="removeFile(this, '#icon', '<%= @app['customData']['icon'] %>')">
+                  <i class="fa fa-trash"> </i>
+                </a>
+              </div>
+            <% end %>
+          </div>
+        </div>
+        <div class="col-md-6 col-md-offset-3 controls">
+          <input type="input" id="icon" name="icon" class="hidden" value="<%= @app['customData']['icon'] %>" required data-validation-required-message="Please upload icon">
+        </div>
+      </div>
+      <div class="form-group row control-group">
+        <div class="col-md-3 item">
+          Images
+        </div>
+        <div class="col-md-6">
+          <div id="upload-images" class="dropzone">
+            <input type="input" id="images" name="images" class="hidden" value="<%= (@app['customData']['images'].class == Array) ? @app['customData']['images'].join(',') : @app['customData']['images'] %>">
+            <% if defined?(@app['customData']['imageList'].flatten)
+              @app['customData']['imageList'].flatten.each do |image|
+            %>
+              <div class="dz-preview dz-processing dz-image-preview dz-success dz-complete">
+                <div class="dz-image">
+                  <img data-dz-thumbnail src="<%= image %>">
+                </div>
+                <div class="dz-progress">
+                  <span class="dz-upload completed" data-dz-uploadprogress style="width: 100%">
+                    Complete
+                  </span>
+                </div>
+                <a class="dz-remove" href="javascript:void(0)" data-dz-remopve onclick="removeFile(this, '#images', '<%= image %>')">
+                  <i class="fa fa-trash"> </i>
+                </a>
+              </div>
+            <% end
+              end
+            %>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row control-group">
+        <div class="col-md-3 item">
+          Files
+        </div>
+        <div class="col-md-6">
+          <div id="upload-files" class="dropzone">
+            <input type="input" id="files" name="files" class="hidden" value="<%= (@app['customData']['files'].class == Array) ? @app['customData']['files'].join(',') : @app['customData']['files'] %>">
+            <%  if defined?(@app['customData']['fileList'])
+                @app['customData']['fileList'].flatten.each do |file|
+            %>
+              <div class="dz-preview dz-processing dz-image-preview dz-success dz-complete">
+                <div class="dz-image">
+                  <a href ="<%=file%>" download><i class="fa fa-file"> </i></a>
+                </div>
+                <div class="dz-progress">
+                  <span class="dz-upload completed" data-dz-uploadprogress style="width: 100%">
+                    Complete
+                  </span>
+                </div>
+                <a class="dz-remove" href="javascript:void(0)" data-dz-remove onclick="removeFile(this, '#files', '<%= file %>')">
+                  <i class="fa fa-trash"> </i>
+                </a>
+              </div>
+            <%
+                end
+              end
+            %>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row control-group">
+        <div class="col-md-3 item">
+          Category <span class="text-danger"> * </span>
+        </div>
+        <div class="col-md-6 controls">
+          <select class="form-control categorizer" multiple="multiple" required data-validation-required-message="Please select at least one", name="category[]" value="<%= @app['customData']['category'] %>">
+            <% allowed_categories.each do |category| %>
+              <option <%= @app['customData']['category'].include?(category) ? 'selected' : '' %>> <%= category %> </option>
+            <% end %>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row control-group">
+        <div class="col-md-3 item">
+          Website URL
+        </div>
+        <div class="col-md-6">
+          <input class="form-control website_url" id="website_url" name="website" value="<%= @app['customData']['website'] %>" onblur='validateWebsite()'>
+          <div class="show_website help-block hide"><ul role="alert"><li>Please Provide valid URL</li></ul></div>
+        </div>
+      </div>
+      <div class="form-group row control-group">
+        <div class="col-md-3 item">
+          Video URL
+        </div>
+        <div class="col-md-6">
+          <input class="form-control video-url" name="video" id="video_url" value="<%= @app['customData']['video'] %>" onblur="validateVideoUrl()">
+          <div id="show_video" class=" show_video help-block hide"><ul role="alert"><li>Please Provide valid video url</li></ul></div>
+          <div class="video-preview"> </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="col-md-6 col-md-offset-3">
+          <button type="submit" class="btn btn-primary pull-right" onclick="bSubmit=false;">
+            Save
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script type="text/javascript">
+  // Remove file from dropzone preview area
+  function removeFile(obj, selector, fileName) {
+    $(selector).val($(selector).val().replace(',' + fileName, ''));
+    $(selector).val($(selector).val().replace(fileName + ',', ''));
+    $(selector).val($(selector).val().replace(fileName, ''));
+    $(obj).parent().remove();
+  }
+</script>

@@ -1,0 +1,15 @@
+<% if @apps.present? %>
+  <% @apps.each do |app| %>
+    <a class="Integration-box" href="details/<%= app['safeName'][0] %>">
+      <div class="row">
+        <%= image_tag "#{app['customData']['icon']}", class: 'Integration-Icon' %>
+        <div class="Integration-Detail">
+          <h3><%= app['name'] %></h3>
+          <p class="IntegrationTagline"><%= app['customData']['summary'] %>
+        </div>
+      </div>
+    </a>
+  <% end %>
+<% else %>
+  <div class="no-app-content">There are no apps available</div>
+<% end %>

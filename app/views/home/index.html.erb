@@ -1,0 +1,34 @@
+<%= stylesheet_link_tag 'market-custom' %>
+<div class="jumbotron hero-section">
+  <div class="container">
+    <h1 class="heading">Your Marketplace</h1>
+    <p class="sub-txt">Apps, plugins and add-ons for your platform</p>
+    <% if @featured_apps %>
+      <% @featured_apps.each do |featured_app| %>
+        <div class="col-sm-6 col-md-3 MarketplaceFeature">
+          <a href="details/<%= featured_app['safeName'][0] %>">
+            <div class="MarketplaceFeature-icon">
+              <%= image_tag "#{featured_app['customData']['icon']}", alt: '' %>
+            </div>
+            <h3><%= featured_app['name'] %></h3>
+            <p class="MarketplaceFeature-text"><%= featured_app['customData']['summary'] %></p>
+          </a>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+<!--end-->
+
+<div class="container">
+  <!-- sidebar -->
+  <%= render 'sidebar' %>
+  <!-- end sidebar -->
+
+  <!-- search conatiner -->
+  <div class="col-sm-12 col-md-8 col-lg-9">
+    <div class="main-content home_app_list">
+      <%= render "app_list" %>
+    </div>
+  </div>
+</div>

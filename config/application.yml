@@ -1,0 +1,6 @@
+development:
+  BASE_URL: https://market.openchannel.io
+  MARKETPLACE_ID: 5b6961a9a49d44415468edce
+  SECRET: jW30srP0Qov9SUQnh1XO8Ncj2D4h4oZaIdg-GB_Pfqg
+  DEVELOPER_ID: '1'
+  USER_ID: '1'
